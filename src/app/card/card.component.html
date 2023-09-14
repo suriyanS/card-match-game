@@ -1,0 +1,6 @@
+<div class="card" [class.reveal]="isRevealed" (click)="onCardClick()">
+  <div class="front"></div>
+  <div class="back">
+    <img [src]="getImageUrl()" alt="card">
+  </div>
+</div>

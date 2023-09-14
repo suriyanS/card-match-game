@@ -1,0 +1,45 @@
+.card {
+    width: 73px;
+    height: 50px;
+    background-color: #c98d1d;
+    border: 2px solid #808080;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    perspective: 1000px;
+    transform-style: preserve-3d;
+    transition: transform 0.5s ease;
+  }
+
+  @media screen and (max-width: 768px) {
+    .card {
+      width: 50px;
+    }
+  }
+  
+  .card.reveal{
+    transform: rotateY(180deg);
+  }
+  
+  .front,
+  .back {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    backface-visibility: hidden;
+  }
+  
+  .front {
+    background-color: #ccc;
+  }
+  
+  .back {
+    background-color: #f0f0f0;
+    transform: rotateY(180deg);
+  }
+  

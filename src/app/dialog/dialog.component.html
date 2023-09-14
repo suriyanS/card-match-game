@@ -1,0 +1,17 @@
+<p-dialog
+  header="Header"
+  [(visible)]="visible"
+  [style]="{ width: '50vw' }"
+  [modal]="true"
+>
+  <ng-template pTemplate="header">
+    <span class="text-xl font-bold">{{ title }}</span>
+  </ng-template>
+  <p>{{ content }}</p>
+  <ng-template pTemplate="footer">
+    <p-button
+      (click)="onButtonClick()"
+      [label]="buttonLabel"
+    ></p-button>
+  </ng-template>
+</p-dialog>

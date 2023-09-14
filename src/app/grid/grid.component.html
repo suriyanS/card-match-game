@@ -1,0 +1,58 @@
+<app-dialog
+  [visible]="showDialog"
+  [title]="dialogTitle"
+  [content]="dialogContent"
+  [buttonLabel]="dialogButtonLabel"
+  (buttonClick)="onDialogButtonClick()"
+></app-dialog>
+<div *ngIf="showGameWindow; then gameWindow; else mainWindow"></div>
+<ng-template #gameWindow>
+  <div class="timer-cotainer">
+    <span>
+      <p-button
+        label="Quit"
+        styleClass="p-button-danger"
+        (onClick)="onGameStop()"
+      ></p-button>
+    </span>
+    <span>
+      <app-timer (timesUp)="onTimesUp()"></app-timer>
+    </span>
+  </div>
+  <div class="grid-container">
+    <div class="grid">
+      <div *ngFor="let card of cards; let i = index">
+        <app-card
+          [value]="card"
+          [isRevealed]="isCardRevealed(i)"
+          (cardClicked)="revealCard(i)"
+        ></app-card>
+      </div>
+    </div>
+  </div>
+</ng-template>
+<ng-template #mainWindow>
+  <div class="card-container">
+    <p-card
+      header="Games"
+      subheader="Pick a game to play"
+      [style]="{ width: '360px' }"
+    >
+      <ng-template pTemplate="header">
+        <img alt="Card" src="assets/images/cards.png" />
+      </ng-template>
+      <div *ngFor="let category of categories" class="field-checkbox">
+        <p-radioButton
+          [inputId]="category.key"
+          name="category"
+          [value]="category"
+          [(ngModel)]="selectedCategory"
+        ></p-radioButton>
+        <label [for]="category.key" class="ml-2">{{ category.name }}</label>
+      </div>
+      <ng-template pTemplate="footer">
+        <p-button label="Play" (onClick)="onGameStart()"></p-button>
+      </ng-template>
+    </p-card>
+  </div>
+</ng-template>
