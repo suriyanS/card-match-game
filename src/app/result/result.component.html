@@ -1,0 +1,16 @@
+<!-- <div class="result-page">
+  <h1>{{ title }}</h1>
+  <p>
+    {{ message }}
+  </p>
+  
+</div> -->
+<div class="result-page">
+  <p-panel [header]="title">
+    <p>
+      {{ message }}
+    </p>
+    <p-button label="Play Again" styleClass="p-button-sm" (click)="restartGame()"></p-button>
+    <p-button label="Quit" styleClass="p-button-danger p-button-sm" (click)="quitGame()"></p-button>
+  </p-panel>
+</div>

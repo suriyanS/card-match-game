@@ -8,19 +8,6 @@
   background-color: #FFFFFF;
 }
 
-.field-checkbox {
-  display: flex;
-  align-items: center;
-}
-
-.field-checkbox p-radioButton {
-  margin-right: 5px;
-}
-
-.field-checkbox label {
-  padding: 10px;
-}
-
 .card-container {
   display: flex;
   justify-content: center;

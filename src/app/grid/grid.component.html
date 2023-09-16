@@ -1,10 +1,3 @@
-<app-dialog
-  [visible]="showDialog"
-  [title]="dialogTitle"
-  [content]="dialogContent"
-  [buttonLabel]="dialogButtonLabel"
-  (buttonClick)="onDialogButtonClick()"
-></app-dialog>
 <div *ngIf="showGameWindow; then gameWindow; else mainWindow"></div>
 <ng-template #gameWindow>
   <div class="timer-cotainer">
@@ -35,21 +28,17 @@
   <div class="card-container">
     <p-card
       header="Games"
-      subheader="Pick a game to play"
+      subheader="Select a Game Category"
       [style]="{ width: '360px' }"
     >
       <ng-template pTemplate="header">
         <img alt="Card" src="assets/images/cards.png" />
       </ng-template>
-      <div *ngFor="let category of categories" class="field-checkbox">
-        <p-radioButton
-          [inputId]="category.key"
-          name="category"
-          [value]="category"
-          [(ngModel)]="selectedCategory"
-        ></p-radioButton>
-        <label [for]="category.key" class="ml-2">{{ category.name }}</label>
-      </div>
+      <p-listbox
+        [options]="categories"
+        [(ngModel)]="selectedCategory"
+        optionLabel="name"
+      ></p-listbox>
       <ng-template pTemplate="footer">
         <p-button label="Play" (onClick)="onGameStart()"></p-button>
       </ng-template>

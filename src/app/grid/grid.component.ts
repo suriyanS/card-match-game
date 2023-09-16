@@ -3,11 +3,26 @@ import { Card, CardComponent } from '../card/card.component';
 import { CommonModule } from '@angular/common';
 import { TimerComponent } from '../timer/timer.component';
 import { ToastService } from '../toast/toast.service';
-import { DialogComponent } from '../dialog/dialog.component';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
-import { RadioButtonModule } from 'primeng/radiobutton';
 import { FormsModule } from '@angular/forms';
+import { DataService } from '../service/data.service';
+import { DataKeys } from '../service/data-keys';
+import { GameResult, ResultComponent } from '../result/result.component';
+import { Router } from '@angular/router';
+import { ListboxModule } from 'primeng/listbox';
+import {
+  BIRD_AND_INSECT_CARDS,
+  FRUIT_CARDS,
+  GAME_CATEGORIES,
+  VEGETABLE_CARDS,
+} from '../constants';
+import { ErrorLogService } from '../service/error-log.service';
+
+export interface Category {
+  key: string;
+  name: string;
+}
 
 @Component({
   selector: 'app-grid',
@@ -18,17 +33,17 @@ import { FormsModule } from '@angular/forms';
     CommonModule,
     CardComponent,
     TimerComponent,
-    DialogComponent,
     CardModule,
     ButtonModule,
-    RadioButtonModule,
     FormsModule,
+    ResultComponent,
+    ListboxModule,
   ],
 })
 export class GridComponent {
   cards: Card[] = [];
   revealedCards: number[] = [];
-  revealedCardsHistory: number[] = [];
+  revealedCardsHistory: Set<number> = new Set<number>();
   matchedPairs: number[] = [];
   @Output()
   isPenaltyApplied: EventEmitter<boolean> = new EventEmitter<boolean>();
@@ -36,117 +51,93 @@ export class GridComponent {
   isLevelCompleted: EventEmitter<boolean> = new EventEmitter<boolean>();
   @ViewChild(TimerComponent)
   timerComponent!: TimerComponent;
-  dialogTitle = 'Congratulations!';
-  dialogContent = '';
   penalty = 5;
-  showDialog = false;
-  dialogButtonLabel = 'Play Again';
   showGameWindow = false;
-  selectedCategory: any = null;
   numberOfColumns = 6;
   numberOfRows = 6;
-  categories: any[] = [
-    { name: 'Birds and Insects', key: 'BI' },
-    { name: 'Fruits', key: 'FR' },
-    { name: 'Vegetables', key: 'VG' },
-  ];
+  categories: Category[] = GAME_CATEGORIES;
+  selectedCategory!: Category;
+  birdAndInsectCards: Card[] = BIRD_AND_INSECT_CARDS;
+  fruitCards: Card[] = FRUIT_CARDS;
+  vegetableCards: Card[] = VEGETABLE_CARDS;
 
-  birdAndInsectCards: Card[] = [
-    { id: 1, image: 'bird.png' },
-    { id: 2, image: 'dove.png' },
-    { id: 3, image: 'duck.png' },
-    { id: 4, image: 'flamingo.png' },
-    { id: 5, image: 'flying-duck.png' },
-    { id: 6, image: 'hummingbird.png' },
-    { id: 7, image: 'peacock.png' },
-    { id: 8, image: 'seagull.png' },
-    { id: 9, image: 'swan.png' },
-    { id: 10, image: 'woodpecker.png' },
-    { id: 11, image: 'ant.png' },
-    { id: 12, image: 'bumblebee.png' },
-    { id: 13, image: 'butterfly.png' },
-    { id: 14, image: 'caterpillar.png' },
-    { id: 15, image: 'dragonfly.png' },
-    { id: 16, image: 'fly.png' },
-    { id: 17, image: 'grasshopper.png' },
-    { id: 18, image: 'hornet.png' },
-  ];
-
-  fruitCards: Card[] = [
-    { id: 1, image: 'apple-fruit.png' },
-    { id: 2, image: 'apricot.png' },
-    { id: 3, image: 'avocado.png' },
-    { id: 4, image: 'banana.png' },
-    { id: 5, image: 'citrus.png' },
-    { id: 6, image: 'coconut.png' },
-    { id: 7, image: 'date-fruit.png' },
-    { id: 8, image: 'dragon-fruit.png' },
-    { id: 9, image: 'half-citrus.png' },
-    { id: 10, image: 'jackfruit.png' },
-    { id: 11, image: 'mango.png' },
-    { id: 12, image: 'mangosteen.png' },
-    { id: 13, image: 'peeled-banana.png' },
-    { id: 14, image: 'pineapple.png' },
-    { id: 15, image: 'plaintains.png' },
-    { id: 16, image: 'pomegranate.png' },
-    { id: 17, image: 'rambun.png' },
-    { id: 18, image: 'watermelon.png' },
-  ];
-
-  vegetableCards = [
-    { id: 1, image: 'artichoke.png' },
-    { id: 2, image: 'carrot.png' },
-    { id: 3, image: 'cauliflower.png' },
-    { id: 4, image: 'celery.png' },
-    { id: 5, image: 'chard.png' },
-    { id: 6, image: 'chili-pepper.png' },
-    { id: 7, image: 'collard-greens.png' },
-    { id: 8, image: 'corn.png' },
-    { id: 9, image: 'finocchio.png' },
-    { id: 10, image: 'gailan.png' },
-    { id: 11, image: 'group-of-vegetables.png' },
-    { id: 12, image: 'pumpkin.png' },
-    { id: 13, image: 'soy.png' },
-    { id: 14, image: 'spinach.png' },
-    { id: 15, image: 'squash.png' },
-    { id: 16, image: 'sweet-potato.png' },
-    { id: 17, image: 'you-choy.png' },
-    { id: 18, image: 'zucchini.png' },
-  ];
-
-  constructor(private toastService: ToastService) {}
+  constructor(
+    private dataService: DataService,
+    private router: Router,
+    private toastService: ToastService,
+    private logService: ErrorLogService
+  ) {}
 
   ngOnInit() {
-    this.selectedCategory = this.categories[0];
+    this.setDefaults();
+  }
+
+  setDefaults() {
+    let gameCategory = this.dataService.getData(DataKeys.GAME_CATEGORY);
+    this.selectedCategory = gameCategory ? gameCategory : this.categories[0];
+    const showGameWindow = this.dataService.getData(DataKeys.SHOW_GAME_WINDOW);
+    this.showGameWindow = showGameWindow ? showGameWindow : false;
+    if (this.showGameWindow) {
+      this.onGameStart();
+    }
   }
 
   revealCard(index: number) {
-    if (this.revealedCards.length < 2 && !this.revealedCards.includes(index)) {
+    if (this.isCardSelectable(index)) {
       this.revealedCards.push(index);
 
       if (this.revealedCards.length === 2) {
         const [firstIndex, secondIndex] = this.revealedCards;
 
-        if (this.cards[firstIndex] === this.cards[secondIndex]) {
-          this.matchedPairs.push(firstIndex, secondIndex);
-        } else if (
-          this.revealedCardsHistory.includes(firstIndex) ||
-          this.revealedCardsHistory.includes(secondIndex)
-        ) {
-          this.onPenaltyApplied();
+        if (this.cardsMatch(firstIndex, secondIndex)) {
+          this.handleMatchingPairs(firstIndex, secondIndex);
         } else {
-          this.revealedCardsHistory.push(firstIndex);
-          this.revealedCardsHistory.push(secondIndex);
+          this.handleMismatchedPairs(firstIndex, secondIndex);
         }
-
-        setTimeout(() => {
-          this.revealedCards = [];
-        }, 1000);
+        this.resetRevealedCardsAfterDelay();
       }
     }
-    if (this.matchedPairs.length === this.cards.length) {
+
+    if (this.allPairsMatched()) {
       this.onLevelCompleted();
     }
+  }
+
+  isCardSelectable(index: number): boolean {
+    return (
+      this.revealedCards.length < 2 &&
+      !this.revealedCards.includes(index) &&
+      !this.matchedPairs.includes(index)
+    );
+  }
+
+  cardsMatch(firstIndex: number, secondIndex: number): boolean {
+    return this.cards[firstIndex] === this.cards[secondIndex];
+  }
+
+  handleMatchingPairs(firstIndex: number, secondIndex: number) {
+    this.matchedPairs.push(firstIndex, secondIndex);
+  }
+
+  handleMismatchedPairs(firstIndex: number, secondIndex: number) {
+    if (
+      this.revealedCardsHistory.has(firstIndex) ||
+      this.revealedCardsHistory.has(secondIndex)
+    ) {
+      this.onPenaltyApplied();
+    }
+    this.revealedCardsHistory.add(firstIndex);
+    this.revealedCardsHistory.add(secondIndex);
+  }
+
+  resetRevealedCardsAfterDelay() {
+    setTimeout(() => {
+      this.revealedCards = [];
+    }, 1000);
+  }
+
+  allPairsMatched(): boolean {
+    return this.matchedPairs.length === this.cards.length;
   }
 
   isCardRevealed(index: number): boolean {
@@ -170,34 +161,39 @@ export class GridComponent {
 
   onLevelCompleted() {
     this.resetGrid();
-    this.dialogContent = `You finished the game in ${this.timerComponent.minutes}:${this.timerComponent.seconds}`;
-    this.showDialog = true;
+    const gameResult: GameResult = {
+      title: `Congratulations!`,
+      message: `You finished the game in ${this.timerComponent.minutes}:${this.timerComponent.seconds}`,
+    };
+    this.dataService.setData(DataKeys.GAME_RESULT, gameResult);
+    this.showGameWindow = false;
   }
 
   resetGrid() {
     this.matchedPairs = [];
     this.revealedCards = [];
-    this.revealedCardsHistory = [];
+    this.revealedCardsHistory = new Set<number>();
     this.isLevelCompleted.emit(true);
     this.timerComponent.stopTimer();
   }
 
-  onDialogButtonClick() {
-    this.timerComponent.resetTimer();
-    this.timerComponent.startTimer();
-  }
-
   onGameStart() {
-    this.cards = this.generateCards(
-      this.numberOfRows,
-      this.numberOfColumns,
-      this.getCards()
-    );
-    this.showGameWindow = true;
+    const cards = this.getCards();
+    if (cards && cards.length > 0) {
+      this.cards = this.generateCards(
+        this.numberOfRows,
+        this.numberOfColumns,
+        cards
+      );
+      this.showGameWindow = true;
+    } else {
+      this.throwInvalidConfigurationError();
+    }
   }
 
   getCards(): Card[] {
     let cards: Card[] = [];
+    this.dataService.setData(DataKeys.GAME_CATEGORY, this.selectedCategory);
     switch (this.selectedCategory.key) {
       case 'BI':
         cards = this.birdAndInsectCards;
@@ -222,29 +218,33 @@ export class GridComponent {
   generateCards(numRows: number, numCols: number, cardArray: any[]) {
     const totalCards = numRows * numCols;
     if (totalCards % 2 !== 0 || cardArray.length < totalCards / 2) {
-      this.toastService.showError(
-        'Oops! Something went wrong. Please try again later.'
-      );
-      throw new Error(
-        'Invalid configuration: Ensure an even number of cards and enough unique cards for the grid.'
-      );
+      this.throwInvalidConfigurationError();
     }
-
     const selectedCards: any[] = [];
     for (let i = 0; i < totalCards / 2; i++) {
       selectedCards.push(cardArray[i]);
     }
-
     const allCards = [...selectedCards, ...selectedCards];
     this.shuffleCards(allCards);
-
     return allCards;
   }
 
   onTimesUp() {
     this.resetGrid();
-    this.dialogContent = `You have exceeded the game time limit ${this.timerComponent.minutes}:${this.timerComponent.seconds}`;
-    this.dialogTitle = `Game Over! Time's Up'`;
-    this.showDialog = true;
+    const gameResult: GameResult = {
+      title: `Game Over! Time's Up`,
+      message: `You have exceeded the game time limit ${this.timerComponent.minutes}:${this.timerComponent.seconds}`,
+    };
+    this.dataService.setData(DataKeys.GAME_RESULT, gameResult);
+    this.router.navigate(['/result']);
+  }
+
+  throwInvalidConfigurationError() {
+    this.toastService.showError(
+      'Oops! Something went wrong. Please try again later.'
+    );
+    this.logService.logError(
+      'Invalid configuration: Ensure an even number of cards and enough unique cards for the grid.'
+    );
   }
 }

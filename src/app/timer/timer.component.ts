@@ -23,7 +23,7 @@ export class TimerComponent implements OnInit, OnDestroy {
   maximumTimeLimit = 1;
   @Output()
   timesUp: EventEmitter<void> = new EventEmitter<void>();
-
+  formattedTime = '00:00';
   constructor() {}
 
   ngOnInit() {
@@ -40,6 +40,7 @@ export class TimerComponent implements OnInit, OnDestroy {
           this.timesUp.emit();
         }
       }
+      this.formattedTime = this.formatTime(this.minutes, this.seconds);
     }, 1000);
   }
 
@@ -57,7 +58,17 @@ export class TimerComponent implements OnInit, OnDestroy {
     if (this.seconds >= 60) {
       this.minutes += Math.floor(this.seconds / 60);
       this.seconds %= 60;
+      if (this.minutes >= this.maximumTimeLimit) {
+        this.timesUp.emit();
+      }
     }
+    this.formattedTime = this.formatTime(this.minutes, this.seconds);
+  }
+
+  formatTime(minutes: number, seconds: number): string {
+    const formattedMinutes = minutes < 10 ? `0${minutes}` : `${minutes}`;
+    const formattedSeconds = seconds < 10 ? `0${seconds}` : `${seconds}`;
+    return `${formattedMinutes}:${formattedSeconds}`;
   }
 
   ngOnDestroy() {
