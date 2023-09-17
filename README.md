@@ -1,27 +1,37 @@
-# CardMatchGame
+# Card Match Game
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 16.0.2.
+## About
 
-## Development server
+Welcome to Card Match Game! This project is a fun and engaging card matching game. In this game, you'll be tasked with matching pairs of cards, testing your memory and concentration. Whether you're here to play the game or explore the code behind it, you're in for a great experience.
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+## Code Coverage
 
-## Code scaffolding
+[![Code Coverage](https://codecov.io/github/suriyanS/card-match-game/graph/badge.svg?token=WEVJ78UJ25)](https://codecov.io/github/suriyanS/card-match-game)
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+The code coverage report provides insights into the effectiveness of tests. Feel free to check it out to see which parts of the code are thoroughly tested and if there are areas that might need more attention.
 
-## Build
+## NPM Commands
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+To get started with this project, you'll need to use some NPM commands. Here are the key commands you'll use:
 
-## Running unit tests
+- `npm install`: Use this command to install all the necessary dependencies for the project. It's the first step after cloning the repository.
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+- `npm start`: Start the development server with this command to preview the game in your browser. It also sets up live reloading for a smooth development experience.
 
-## Running end-to-end tests
+- `npm test`: Run the test suite using this command. It provides information about the test coverage and ensures that the code behaves as expected.
 
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
+- `npm build`: When you're ready to deploy the game, use this command to build a production-ready version of the project. The optimized build will be available in the `build` directory.
 
-## Further help
+## StackBlitz Link
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+You can explore and play Card Match Game directly in your browser using StackBlitz. Here's the link to the online editor:
+
+[Card Match Game on StackBlitz](https://stackblitz.com/edit/stackblitz-starters-e1hbzx)
+
+Feel free to fork the project, experiment with the code, and see how the game works behind the scenes.
+
+## Author
+
+Suriyan Selvaraj
+
+Enjoy playing the Card Match Game, and happy coding!

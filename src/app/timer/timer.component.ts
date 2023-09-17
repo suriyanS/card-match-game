@@ -20,7 +20,7 @@ export class TimerComponent implements OnInit, OnDestroy {
   minutes = 0;
   timer: any;
   @Input()
-  maximumTimeLimit = 1;
+  maximumTimeLimit = 60;
   @Output()
   timesUp: EventEmitter<void> = new EventEmitter<void>();
   formattedTime = '00:00';
