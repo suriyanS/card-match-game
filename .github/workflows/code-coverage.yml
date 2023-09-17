@@ -18,6 +18,9 @@ jobs:
         with:
           node-version: 18
 
+      - name: Set up Chrome
+        uses: browser-actions/setup-chrome@latest
+
       - name: Install dependencies
         run: npm install
 
@@ -30,4 +33,4 @@ jobs:
             CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
         with:
           name: code-coverage
-          path: coverage
+          path: coverage/card-match-game
