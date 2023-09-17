@@ -69,3 +69,6 @@ export const BIRD_AND_INSECT_CARDS: Card[] = [
   { id: 17, image: 'grasshopper.png' },
   { id: 18, image: 'hornet.png' },
 ];
+
+export const IMAGE_BASE_URL =
+  'https://raw.githubusercontent.com/suriyanS/card-match-game/main/src/assets/images';

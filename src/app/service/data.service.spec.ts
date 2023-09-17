@@ -1,6 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { DataService } from './data.service';
 import { DataKeys } from './data-keys';
+import { IMAGE_BASE_URL } from '../constants';
 
 describe('DataService', () => {
   let service: DataService;
@@ -31,5 +32,14 @@ describe('DataService', () => {
     const retrievedValue = service.getData(nonExistentKey);
 
     expect(retrievedValue).toBeUndefined();
+  });
+
+  it('should return the correct image URL', () => {
+    const imageName = 'example.jpg';
+    const expectedUrl = `${IMAGE_BASE_URL}/${imageName}`;
+
+    const imageUrl = service.getImageUrl(imageName);
+
+    expect(imageUrl).toBe(expectedUrl);
   });
 });

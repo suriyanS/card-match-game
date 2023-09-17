@@ -1,10 +1,13 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { CommonModule } from '@angular/common';
 import { CardComponent } from './card.component';
+import { DataService } from '../service/data.service';
+import { IMAGE_BASE_URL } from '../constants';
 
 describe('CardComponent', () => {
   let fixture: ComponentFixture<CardComponent>;
   let component: CardComponent;
+  let dataService: DataService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -13,6 +16,7 @@ describe('CardComponent', () => {
 
     fixture = TestBed.createComponent(CardComponent);
     component = fixture.componentInstance;
+    dataService = TestBed.inject(DataService);
   });
 
   it('should create the CardComponent', () => {
@@ -50,6 +54,17 @@ describe('CardComponent', () => {
     fixture.detectChanges();
 
     const imageUrl = component.getImageUrl();
-    expect(imageUrl).toBe('assets/images/example.png');
+    expect(imageUrl).toBe(`${IMAGE_BASE_URL}/example.png`);
+  });
+
+  it('should call dataService.getImageUrl with the correct image name', () => {
+    const imageName = 'example.png';
+    component.value = { id: 1, image: imageName };
+    spyOn(dataService, 'getImageUrl').and.returnValue(
+      'https://example.com/images/example.png'
+    );
+    const imageUrl = component.getImageUrl();
+    expect(dataService.getImageUrl).toHaveBeenCalledWith(imageName);
+    expect(imageUrl).toBe('https://example.com/images/example.png');
   });
 });

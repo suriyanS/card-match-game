@@ -425,6 +425,16 @@ describe('GridComponent', () => {
     expect(component.isCardRevealed(6)).toBeFalse();
   });
 
+  it('should call dataService.getImageUrl with the correct image name', () => {
+    const imageName = 'example.jpg';
+    spyOn(dataService, 'getImageUrl').and.returnValue(
+      'https://example.com/images/example.jpg'
+    );
+    const imageUrl = component.getImageUrl(imageName);
+    expect(dataService.getImageUrl).toHaveBeenCalledWith(imageName);
+    expect(imageUrl).toBe('https://example.com/images/example.jpg');
+  });
+
   afterEach(() => {
     fixture.destroy();
   });

@@ -247,4 +247,8 @@ export class GridComponent {
       'Invalid configuration: Ensure an even number of cards and enough unique cards for the grid.'
     );
   }
+
+  getImageUrl(name: string) {
+    return this.dataService.getImageUrl(name);
+  }
 }

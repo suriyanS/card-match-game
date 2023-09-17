@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { DataService } from '../service/data.service';
 
 export interface Card {
   id: number;
@@ -19,7 +20,7 @@ export class CardComponent {
   isRevealed!: boolean;
   @Output() cardClicked = new EventEmitter<Card>();
 
-  constructor() {}
+  constructor(private dataService: DataService) {}
 
   onCardClick() {
     if (!this.isRevealed) {
@@ -28,6 +29,6 @@ export class CardComponent {
   }
 
   getImageUrl() {
-    return `assets/images/${this.value.image}`;
+    return this.dataService.getImageUrl(this.value.image);
   }
 }

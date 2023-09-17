@@ -32,7 +32,7 @@
       [style]="{ width: '360px' }"
     >
       <ng-template pTemplate="header">
-        <img alt="Card" src="assets/images/cards.png" />
+        <img alt="Card" [src]="getImageUrl('cards.png')" />
       </ng-template>
       <p-listbox
         [options]="categories"
