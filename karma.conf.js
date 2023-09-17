@@ -25,14 +25,15 @@ module.exports = function (config) {
       suppressAll: true // removes the duplicated traces
     },
     coverageReporter: {
-      dir: require('path').join(__dirname, './coverage/card-match-game'),
+      dir: require('path').join(__dirname, './coverage'),
       subdir: '.',
       reporters: [
+        { type: 'lcovonly', subdir: '.' },
         { type: 'html' },
         { type: 'text-summary' }
       ]
     },
-    reporters: ['progress', 'kjhtml'],
+    reporters: ['progress', 'kjhtml', 'coverage'],
     browsers: ['ChromeHeadless'],
     restartOnFileChange: true,
     singleRun: true,
