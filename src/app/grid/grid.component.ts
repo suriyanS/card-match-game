@@ -166,7 +166,7 @@ export class GridComponent {
       message: `You finished the game in ${this.timerComponent.minutes}:${this.timerComponent.seconds}`,
     };
     this.dataService.setData(DataKeys.GAME_RESULT, gameResult);
-    this.showGameWindow = false;
+    this.router.navigate(['/result']);
   }
 
   resetGrid() {
